@@ -1,0 +1,28 @@
+name: run-gradle
+description: Install Java and run gradle tasks
+inputs:
+  args:
+    description: Add command-line arguments into gradle command
+    required: true
+  packages-github-token:
+    description: Auth token to load Github packages
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Java version
+      uses: actions/setup-java@v2
+      with:
+        java-version: 11
+        distribution: 'zulu'
+
+    - name: Validate Gradle wrapper
+      uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
+
+    - name: Check with Gradle
+      shell: sh
+      run: ./gradlew --warning-mode none ${{ inputs.args }}
+      env:
+        GITHUB_USERNAME: 'rollo-team'
+        GITHUB_TOKEN: ${{ inputs.packages-github-token }}
